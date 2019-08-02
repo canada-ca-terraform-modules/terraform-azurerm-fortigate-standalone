@@ -1,0 +1,3 @@
+test/fwconfig/fwconfig-lic.conf
+.terraform
+test/terraform.*
