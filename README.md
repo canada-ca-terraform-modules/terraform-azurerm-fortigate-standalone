@@ -36,58 +36,47 @@ variable "envprefix" {
 }
 
 module "fortigateap" {
-  #source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigateap?ref=20190725.1"
-  source = "./terraform-azurerm-fortigateap"
+  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigate-standalone?ref=20190805.1"
 
   location  = "canadacentral"
   envprefix = "${var.envprefix}"
   
-  keyvault = {
-    name                = "${var.envprefix}-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}${var.envprefix}-Core-Keyvault-RG"),0,8)}"
-    resource_group_name = "${var.envprefix}-Core-Keyvault-RG"
+  fwprefix                     = "${var.envprefix}-FW"
+  vm_size                      = "Standard_F4"
+  adminName                    = "fwadmin"
+  secretPasswordName           = "${azurerm_key_vault_secret.test1.name}"
+  vnet_name                    = "${azurerm_virtual_network.test-VNET.name}"
+  fortigate_resourcegroup_name = "${azurerm_resource_group.test-fortigate-RG.name}"
+  keyvault_resourcegroup_name  = "${azurerm_resource_group.test-fortigate-RG.name}"
+  vnet_resourcegroup_name      = "${azurerm_resource_group.test-fortigate-RG.name}"
+  fw_custom_data               = "fwconfig/fwconfig-lic.conf"
+  # Associated to Nic1
+  subnet1_name = "${azurerm_subnet.subnet1.name}"
+  # Associated to Nic2
+  subnet2_name = "${azurerm_subnet.subnet2.name}"
+  # Associated to Nic3
+  subnet3_name = "${azurerm_subnet.subnet3.name}"
+  # Associated to Nic4
+  subnet4_name = "${azurerm_subnet.subnet4.name}"
+  # Firewall A NIC Private IPs
+  nic1_private_ip_address = "10.10.10.4"
+  nic2_private_ip_address = "10.10.10.68"
+  nic3_private_ip_address = "10.10.10.132"
+  nic4_private_ip_address = "10.10.10.196"
+  storage_image_reference = {
+    publisher = "fortinet"
+    offer     = "fortinet_fortigate-vm_v5"
+    sku       = "fortinet_fg-vm"
+    version   = "latest"
   }
-  
-  firewall = {
-    fwprefix = "${var.envprefix}-FW"
-    vm_size     = "Standard_F4"
-    adminName = "fwadmin"
-    secretPasswordName = "fwpassword"
-    vnet_name = "${var.envprefix}-Core-NetCore-VNET"
-    fortigate_resourcegroup_name = "${var.envprefix}-Core-FWCore-RG"
-    keyvault_resourcegroup_name = "${var.envprefix}-Core-Keyvault-RG"
-    vnet_resourcegroup_name = "${var.envprefix}-Core-NetCore-RG"
-    fwa_custom_data = "fwconfig/coreA-lic.conf"
-    fwb_custom_data = "fwconfig/coreB-lic.conf"
-    # Associated to Nic1
-    subnet1_name = "${var.envprefix}-Outside"
-    # Associated to Nic2
-    subnet2_name = "${var.envprefix}-CoreToSpokes"
-    # Associated to Nic3
-    subnet3_name = "${var.envprefix}-Management"
-    # Associated to Nic4
-    subnet4_name = "${var.envprefix}-HASync"
-    # Firewall A NIC Private IPs
-    fwa_nic1_private_ip_address = "100.96.112.4"
-    fwa_nic2_private_ip_address = "100.96.116.5"
-    fwa_nic3_private_ip_address = "100.96.116.36"
-    fwa_nic4_private_ip_address = "100.96.116.68"
-    # Firewall B NIC Private IPs
-    fwb_nic1_private_ip_address = "100.96.112.5"
-    fwb_nic2_private_ip_address = "100.96.116.6"
-    fwb_nic3_private_ip_address = "100.96.116.37"
-    fwb_nic4_private_ip_address = "100.96.116.69"
-    storage_image_reference = {
-      publisher = "fortinet"
-      offer     = "fortinet_fortigate-vm_v5"
-      sku       = "fortinet_fg-vm"
-      version   = "latest"
-    }
-    plan = {
-      name      = "fortinet_fg-vm"
-      publisher = "fortinet"
-      product   = "fortinet_fortigate-vm_v5"
-    }
+  plan = {
+    name      = "fortinet_fg-vm"
+    publisher = "fortinet"
+    product   = "fortinet_fortigate-vm_v5"
   }
+  keyvaultName              = "${azurerm_key_vault.test-keyvault.name}"
+  keyvaultResourceGroupName = "${azurerm_resource_group.test-fortigate-RG.name}"
+  tags                      = "${var.tags}"
 }
 
 resource azurerm_lb_rule FW-ExternalLoadBalancer__jumpboxRDP {

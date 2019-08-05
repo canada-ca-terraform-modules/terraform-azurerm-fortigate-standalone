@@ -55,7 +55,6 @@ module "test-firewall" {
   secretPasswordName           = "${azurerm_key_vault_secret.test1.name}"
   vnet_name                    = "${azurerm_virtual_network.test-VNET.name}"
   fortigate_resourcegroup_name = "${azurerm_resource_group.test-fortigate-RG.name}"
-  keyvault_resourcegroup_name  = "${azurerm_resource_group.test-fortigate-RG.name}"
   vnet_resourcegroup_name      = "${azurerm_resource_group.test-fortigate-RG.name}"
   fw_custom_data               = "fwconfig/fwconfig-lic.conf"
   # Associated to Nic1
