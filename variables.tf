@@ -41,7 +41,6 @@ variable "secretPasswordName" {
 
 
 variable "vnet_name" {}
-variable "fortigate_resourcegroup_name" {}
 variable "keyvault_resourcegroup_name" {}
 variable "vnet_resourcegroup_name" {}
 variable "fw_custom_data" {}
