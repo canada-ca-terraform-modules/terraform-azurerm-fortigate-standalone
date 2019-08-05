@@ -111,5 +111,4 @@ TO BE DOCUMENTED
 
 | Date     | Release    | Change                                                                                                             |
 | -------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| 20190725 | 20190725.1 | Fix missing backend LB association and add support for lbrules definition using output from module as demonstrated |
-| 20190724 | 20190724.1 | 1st deploy                                                                                                         |
+| 20190805 | 20190805.1 | 1st deploy                                                                                                         |
