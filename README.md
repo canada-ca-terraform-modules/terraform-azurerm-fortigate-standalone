@@ -60,6 +60,7 @@ module "fortigateap" {
   subnet4_name = "${azurerm_subnet.subnet4.name}"
   # Firewall A NIC Private IPs
   nic1_private_ip_address = "10.10.10.4"
+  nic1_public_ip          = true
   nic2_private_ip_address = "10.10.10.68"
   nic3_private_ip_address = "10.10.10.132"
   nic4_private_ip_address = "10.10.10.196"
@@ -109,6 +110,7 @@ TO BE DOCUMENTED
 
 ## History
 
-| Date     | Release    | Change                                                                                                             |
-| -------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| 20190805 | 20190805.1 | 1st deploy                                                                                                         |
+| Date     | Release    | Change                                         |
+| -------- | ---------- | ---------------------------------------------- |
+| 20190806 | 20190806.1 | Adding support for optional public IP on NIC 1 |
+| 20190805 | 20190805.1 | 1st deploy                                     |

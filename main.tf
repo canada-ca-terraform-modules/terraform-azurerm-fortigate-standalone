@@ -37,12 +37,13 @@ resource azurerm_network_interface FW-Nic1 {
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.NSG.id}"
   ip_configuration {
-    name                                    = "ipconfig1"
-    subnet_id                               = "${data.azurerm_subnet.subnet1.id}"
-    private_ip_address                      = "${var.nic1_private_ip_address}"
-    private_ip_address_allocation           = "Static"
-    public_ip_address_id                    = "${azurerm_public_ip.FW-EXT-PubIP.id}"
-    primary                                 = true
+    name                          = "ipconfig1"
+    subnet_id                     = "${data.azurerm_subnet.subnet1.id}"
+    private_ip_address            = "${var.nic1_private_ip_address}"
+    private_ip_address_allocation = "Static"
+    # If public_ip is true then associate one. If not then do not associate
+    public_ip_address_id          = var.nic1_public_ip ? azurerm_public_ip.FW-EXT-PubIP[0].id : ""
+    primary                       = true
   }
 }
 
@@ -54,11 +55,11 @@ resource azurerm_network_interface FW-Nic2 {
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.NSG.id}"
   ip_configuration {
-    name                                    = "ipconfig1"
-    subnet_id                               = "${data.azurerm_subnet.subnet2.id}"
-    private_ip_address                      = "${var.nic2_private_ip_address}"
-    private_ip_address_allocation           = "Static"
-    primary                                 = true
+    name                          = "ipconfig1"
+    subnet_id                     = "${data.azurerm_subnet.subnet2.id}"
+    private_ip_address            = "${var.nic2_private_ip_address}"
+    private_ip_address_allocation = "Static"
+    primary                       = true
   }
 }
 
@@ -94,7 +95,9 @@ resource azurerm_network_interface FW-Nic4 {
   }
 }
 
+# If public_ip is true then create resource. If not then do not create any
 resource azurerm_public_ip FW-EXT-PubIP {
+  count               = "${var.nic1_public_ip ? 1 : 0}"
   name                = "${var.fwprefix}-EXT-PubIP"
   location            = "${var.location}"
   resource_group_name = "${var.fortigate_resourcegroup_name}"

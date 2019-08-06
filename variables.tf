@@ -49,6 +49,7 @@ variable "subnet2_name" {}
 variable "subnet3_name" {}
 variable "subnet4_name" {}
 variable "nic1_private_ip_address" {}
+variable "nic1_public_ip" { default = true }
 variable "nic2_private_ip_address" {}
 variable "nic3_private_ip_address" {}
 variable "nic4_private_ip_address" {}
