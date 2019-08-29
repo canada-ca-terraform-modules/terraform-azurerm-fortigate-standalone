@@ -39,8 +39,10 @@ module "fortigateap" {
   nic2_private_ip_address      = ["10.10.10.69", "10.10.10.70"]
   nic3_private_ip_address      = ["10.10.10.134", "10.10.10.135"]
   nic4_private_ip_address      = ["10.10.10.197"]
-  keyvault.name                 = "somekeyvault.name"
-  keyvault.resource_group_name    = "someKVRGName"
+  keyvault = {
+    name                 = "somekeyvault.name"
+    resource_group_name  = "someKVRGName"
+  }
   tags                         = "someTags"
 }
 ```
@@ -49,7 +51,7 @@ module "fortigateap" {
 
 | Name                    | Type   | Required | Value                                                                                                                           |
 | ----------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| fwprefix                | string | yes      | Name for the firewall resource                                                                                                  |
+| name                    | string | yes      | Name for the firewall resource                                                                                                  |
 | resource_group_name     | string | yes      | Name of the resourcegroup that will contain the Firewall resources                                                              |
 | admin_username          | string | yes      | Name of the VM admin account                                                                                                    |
 | secretPasswordName      | string | yes      | Name of the Keyvault secret containing the VM admin account password                                                            |
@@ -69,7 +71,7 @@ module "fortigateap" {
 | storage_image_reference | object | no       | Specify the storage image used to create the VM. Default is 2016-Datacenter. - [storage image](#storage-image-reference-object) |
 | plan                    | object | no       | Specify the plan used to create the VM. - [plan](#plan-object)                                                                  |
 | custom_data             | string | no       | some custom ps1 code to execute. Eg: ${file("serverconfig/jumpbox-init.ps1")}                                                   |
-| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: false                                                           |
+| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: true                                                           |
 | location                | string | no       | Azure location for resources. Default: canadacentral                                                                            |
 | vm_size                 | string | no       | Specifies the desired size of the Virtual Machine. Default: Standard_F4                                                         |
 
