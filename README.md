@@ -12,105 +12,142 @@ The following security controls can be met through configuration of this templat
 
 ## Dependancies
 
-* [Resource Groups](https://github.com/canada-ca-azure-templates/resourcegroups/blob/master/readme.md)
-* [Keyvault](https://github.com/canada-ca-azure-templates/keyvaults/blob/master/readme.md)
-* [VNET-Subnet](https://github.com/canada-ca-azure-templates/vnet-subnet/blob/master/readme.md)
+* Resource Groups
+* Keyvault
+* VNET-Subnet
 
 ## Usage
 
 ```terraform
-terraform {
-  required_version = ">= 0.12.1"
-}
-
-provider "azurerm" {
-  version         = "= 1.31.0"
-  subscription_id = "2de839a0-37f9-4163-a32a-e1bdb8d6eb7e"
-}
-
-data "azurerm_client_config" "current" {}
-
-variable "envprefix" {
-  description = "Prefix for the environment"
-  default     = "Demo"
-}
-
 module "fortigateap" {
-  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigate-standalone-4nic?ref=20190805.1"
+  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigate-standalone-4nic?ref=20190829.1"
 
-  location  = "canadacentral"
-  envprefix = "${var.envprefix}"
-  
-  fwprefix                     = "${var.envprefix}-FW"
+  name                         = "Something-FW"
+  resourcegroup_name           = "someRGName"
   vm_size                      = "Standard_F4"
-  adminName                    = "fwadmin"
-  secretPasswordName           = "${azurerm_key_vault_secret.test1.name}"
-  vnet_name                    = "${azurerm_virtual_network.test-VNET.name}"
-  fortigate_resourcegroup_name = "${azurerm_resource_group.test-fortigate-RG.name}"
-  keyvault_resourcegroup_name  = "${azurerm_resource_group.test-fortigate-RG.name}"
-  vnet_resourcegroup_name      = "${azurerm_resource_group.test-fortigate-RG.name}"
-  fw_custom_data               = "fwconfig/fwconfig-lic.conf"
-  # Associated to Nic1
-  subnet1_name = "${azurerm_subnet.subnet1.name}"
-  # Associated to Nic2
-  subnet2_name = "${azurerm_subnet.subnet2.name}"
-  # Associated to Nic3
-  subnet3_name = "${azurerm_subnet.subnet3.name}"
-  # Associated to Nic4
-  subnet4_name = "${azurerm_subnet.subnet4.name}"
-  # Firewall A NIC Private IPs
-  nic1_private_ip_address = "10.10.10.4"
-  nic1_public_ip          = true
-  nic2_private_ip_address = "10.10.10.68"
-  nic3_private_ip_address = "10.10.10.132"
-  nic4_private_ip_address = "10.10.10.196"
-  storage_image_reference = {
-    publisher = "fortinet"
-    offer     = "fortinet_fortigate-vm_v5"
-    sku       = "fortinet_fg-vm"
-    version   = "latest"
-  }
-  plan = {
-    name      = "fortinet_fg-vm"
-    publisher = "fortinet"
-    product   = "fortinet_fortigate-vm_v5"
-  }
-  keyvaultName              = "${azurerm_key_vault.test-keyvault.name}"
-  keyvaultResourceGroupName = "${azurerm_resource_group.test-fortigate-RG.name}"
-  tags                      = "${var.tags}"
-}
-
-resource azurerm_lb_rule FW-ExternalLoadBalancer__jumpboxRDP {
-  name                           = "jumpboxRDP"
-  resource_group_name            = "${var.envprefix}-Core-FWCore-RG"
-  loadbalancer_id                = "${module.fortigateap.loadbalancer_id}"
-  frontend_ip_configuration_name = "${var.envprefix}FWpublicLBFE"
-  protocol                       = "Tcp"
-  frontend_port                  = "33890"
-  backend_port                   = "33890"
-  backend_address_pool_id        = "${module.fortigateap.backend_address_pool_id}"
-  probe_id                       = "${module.fortigateap.probe_id}"
-  enable_floating_ip             = false
-  idle_timeout_in_minutes        = "15"
-  load_distribution              = "Default"
+  admin_username               = "fwadmin"
+  secretPasswordName           = "someSecretPasswordName"
+  custom_data                  = "fwconfig/fwconfig-lic.conf"
+  vnet_name                    = "someVnetName"
+  vnet_resourcegroup_name      = "someVnetName"
+  subnet1_name                 = "someName"
+  subnet2_name                 = "someName"
+  subnet3_name                 = "someName"
+  subnet4_name                 = "someName"
+  nic1_private_ip_address      = ["10.10.10.6", "10.10.10.7"]
+  nic1_public_ip               = false
+  nic2_private_ip_address      = ["10.10.10.69", "10.10.10.70"]
+  nic3_private_ip_address      = ["10.10.10.134", "10.10.10.135"]
+  nic4_private_ip_address      = ["10.10.10.197"]
+  keyvault.name                 = "somekeyvault.name"
+  keyvault.resource_group_name    = "someKVRGName"
+  tags                         = "someTags"
 }
 ```
 
-## Parameter Values
+## Variables Values
 
-TO BE DOCUMENTED
+| Name                    | Type   | Required | Value                                                                                                                           |
+| ----------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| fwprefix                | string | yes      | Name for the firewall resource                                                                                                  |
+| resource_group_name     | string | yes      | Name of the resourcegroup that will contain the Firewall resources                                                              |
+| admin_username          | string | yes      | Name of the VM admin account                                                                                                    |
+| secretPasswordName      | string | yes      | Name of the Keyvault secret containing the VM admin account password                                                            |
+| custom_data             | string | yes      | some base firewall config code to apply. Eg: "fwconfig/fwconfig-lic.conf"                                                       |
+| vnetName                | string | yes      | Name of the VNET the subnet is part of                                                                                          |
+| vnet_resourcegroup_name | string | yes      | Name of the resourcegroup containing the VNET                                                                                   |
+| subnet1Name             | string | yes      | Name of the subnet where NIC1 will connect to                                                                                   |
+| subnet2Name             | string | yes      | Name of the subnet where NIC2 will connect to                                                                                   |
+| subnet3Name             | string | yes      | Name of the subnet where NIC3 will connect to                                                                                   |
+| subnet4Name             | string | yes      | Name of the subnet where NIC4 will connect to                                                                                   |
+| keyvault                | object | yes      | Object containing keyvault resource configuration. - [keyvault](#keyvault-object)                                               |
+| tags                    | object | yes      | Object containing a tag values - [tags pairs](#tag-object)                                                                      |
+| nic1_private_ip_address | list   | yes      | List of private IP for the NIC1 - Eg: for two IP: ["10.10.10.10", "10.10.10.11"]                                                |
+| nic2_private_ip_address | list   | yes      | List of private IP for the NIC2 - Eg: for one IP: ["10.10.20.10"]                                                               |
+| nic3_private_ip_address | list   | yes      | List of private IP for the NIC3 - Eg: for one IP: ["10.10.30.10"]                                                               |
+| nic4_private_ip_address | list   | yes      | List of private IP for the NIC4 - Eg: for one IP: ["10.10.40.10"]                                                               |
+| storage_image_reference | object | no       | Specify the storage image used to create the VM. Default is 2016-Datacenter. - [storage image](#storage-image-reference-object) |
+| plan                    | object | no       | Specify the plan used to create the VM. - [plan](#plan-object)                                                                  |
+| custom_data             | string | no       | some custom ps1 code to execute. Eg: ${file("serverconfig/jumpbox-init.ps1")}                                                   |
+| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: false                                                           |
+| location                | string | no       | Azure location for resources. Default: canadacentral                                                                            |
+| vm_size                 | string | no       | Specifies the desired size of the Virtual Machine. Default: Standard_F4                                                         |
 
-### Tag variable
+### tag object
 
-| Name     | Type   | Required | Value      |
-| -------- | ------ | -------- | ---------- |
-| tagname1 | string | No       | tag1 value |
-| ...      | ...    | ...      | ...        |
-| tagnameX | string | No       | tagX value |
+Example tag variable:
+
+```hcl
+tags = {
+  "tag1name" = "somevalue"
+  "tag2name" = "someothervalue"
+  .
+  .
+  .
+  "tagXname" = "some other value"
+}
+```
+
+### storage image reference object
+
+| Name      | Type       | Required           | Value                                                                                              |
+| --------- | ---------- | ------------------ | -------------------------------------------------------------------------------------------------- |
+| publisher | string     | yes                | The image publisher.                                                                               |
+| offer     | string     | yes                | Specifies the offer of the platform image or marketplace image used to create the virtual machine. |
+| sku       | string     | yes                | The image SKU.                                                                                     |
+| version   | string yes | The image version. |
+
+Example variable:
+
+```hcl
+storage_image_reference = {
+  publisher = "MicrosoftWindowsServer"
+  offer     = "WindowsServer"
+  sku       = "2016-Datacenter"
+  version   = "latest"
+}
+```
+
+### plan object
+
+| Name      | Type   | Required | Value                                                                                              |
+| --------- | ------ | -------- | -------------------------------------------------------------------------------------------------- |
+| name      | string | yes      | The image SKU.                                                                                     |
+| publisher | string | yes      | The image publisher.                                                                               |
+| product   | string | yes      | Specifies the offer of the platform image or marketplace image used to create the virtual machine. |
+
+Example variable:
+
+```hcl
+plan = {
+  name      = "fortinet_fg-vm"
+  publisher = "fortinet"
+  product   = "fortinet_fortigate-vm_v5"
+}
+```
+
+### keyvault object
+
+| Name                | Type   | Required | Value                                                    |
+| ------------------- | ------ | -------- | -------------------------------------------------------- |
+| name                | string | yes      | Name of the keyvault resource                            |
+| resource_group_name | string | yes      | Name of the resource group where the keyvault is located |
+
+Example variable:
+
+```hcl
+keyvault = {
+  name                = "some-keyvault-name"
+  resource_group_name = "some-resource-group-name"
+}
+```
 
 ## History
 
-| Date     | Release    | Change                                         |
-| -------- | ---------- | ---------------------------------------------- |
-| 20190806 | 20190806.1 | Adding support for optional public IP on NIC 1 |
-| 20190805 | 20190805.1 | 1st deploy                                     |
+| Date     | Release    | Change                                                                    |
+| -------- | ---------- | ------------------------------------------------------------------------- |
+| 20190829 | 20190829.1 | Add support for multiple NIC                                              |
+|          |            | Renamed some of the variables to align better with basicvm modules syntax |
+|          |            | Update documentation                                                      |
+| 20190806 | 20190806.1 | Adding support for optional public IP on NIC 1                            |
+| 20190805 | 20190805.1 | 1st deploy                                                                |

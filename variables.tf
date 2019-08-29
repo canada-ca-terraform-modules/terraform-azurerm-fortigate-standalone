@@ -3,47 +3,21 @@ variable "location" {
   default     = "canadacentral"
 }
 
-variable "envprefix" {
-  description = "Prefix for the environment"
-  default     = "Demo"
-}
-
 variable "tags" {
+  description = "Tags that will be associated to VM resources"
   default = {
-    "Organizations"     = "PwP0-CCC-E&O"
-    "DeploymentVersion" = "2018-12-14-01"
-    "Classification"    = "Unclassified"
-    "Enviroment"        = "Sandbox"
-    "CostCenter"        = "PwP0-EA"
-    "Owner"             = "cloudteam@tpsgc-pwgsc.gc.ca"
+    "exampleTag1" = "SomeValue1"
+    "exampleTag1" = "SomeValue2"
   }
 }
 
-variable "keyvaultName" {
-
-}
-variable "keyvaultResourceGroupName" {
-
-}
-
-variable "fwprefix" {
-
-}
-variable "vm_size" {
-  default = "Standard_F4"
-}
-variable "adminName" {
-  
-}
-variable "secretPasswordName" {
-  
-}
-
-
+variable "name" {}
+variable "admin_username" {}
+variable "secretPasswordName" {}
 variable "vnet_name" {}
-variable "fortigate_resourcegroup_name" {}
+variable "resourcegroup_name" {}
 variable "vnet_resourcegroup_name" {}
-variable "fw_custom_data" {}
+variable "custom_data" {}
 variable "subnet1_name" {}
 variable "subnet2_name" {}
 variable "subnet3_name" {}
@@ -53,6 +27,9 @@ variable "nic1_public_ip" { default = true }
 variable "nic2_private_ip_address" {}
 variable "nic3_private_ip_address" {}
 variable "nic4_private_ip_address" {}
+variable "vm_size" {
+  default = "Standard_F4"
+}
 variable "storage_image_reference" {
   default = {
     publisher = "fortinet"
@@ -66,5 +43,12 @@ variable "plan" {
     name      = "fortinet_fg-vm"
     publisher = "fortinet"
     product   = "fortinet_fortigate-vm_v5"
+  }
+}
+variable "keyvault" {
+  description = "This block describe the keyvault resource name and resourcegroup name containing the keyvault"
+  default = {
+    name                = ""
+    resource_group_name = ""
   }
 }

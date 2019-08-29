@@ -49,14 +49,14 @@ resource "azurerm_subnet" "subnet4" {
 module "test-firewall" {
   source = "../."
 
-  fwprefix                     = "${var.envprefix}-FW"
-  vm_size                      = "Standard_F4"
-  adminName                    = "fwadmin"
-  secretPasswordName           = "${azurerm_key_vault_secret.test1.name}"
-  vnet_name                    = "${azurerm_virtual_network.test-VNET.name}"
-  fortigate_resourcegroup_name = "${azurerm_resource_group.test-fortigate-RG.name}"
-  vnet_resourcegroup_name      = "${azurerm_resource_group.test-fortigate-RG.name}"
-  fw_custom_data               = "fwconfig/fwconfig-lic.conf"
+  name                    = "${var.envprefix}-FW"
+  vm_size                 = "Standard_F4"
+  admin_username               = "fwadmin"
+  secretPasswordName      = "${azurerm_key_vault_secret.test1.name}"
+  vnet_name                = "${azurerm_virtual_network.test-VNET.name}"
+  resourcegroup_name      = "${azurerm_resource_group.test-fortigate-RG.name}"
+  vnet_resourcegroup_name = "${azurerm_resource_group.test-fortigate-RG.name}"
+  custom_data          = "fwconfig/fwconfig-lic.conf"
   # Associated to Nic1
   subnet1_name = "${azurerm_subnet.subnet1.name}"
   # Associated to Nic2
@@ -66,10 +66,11 @@ module "test-firewall" {
   # Associated to Nic4
   subnet4_name = "${azurerm_subnet.subnet4.name}"
   # Firewall A NIC Private IPs
-  nic1_private_ip_address = "10.10.10.4"
-  nic2_private_ip_address = "10.10.10.68"
-  nic3_private_ip_address = "10.10.10.132"
-  nic4_private_ip_address = "10.10.10.196"
+  nic1_private_ip_address = ["10.10.10.4", "10.10.10.5"]
+  nic1_public_ip          = true
+  nic2_private_ip_address = ["10.10.10.68"]
+  nic3_private_ip_address = ["10.10.10.132", "10.10.10.133"]
+  nic4_private_ip_address = ["10.10.10.196"]
   storage_image_reference = {
     publisher = "fortinet"
     offer     = "fortinet_fortigate-vm_v5"
@@ -81,7 +82,41 @@ module "test-firewall" {
     publisher = "fortinet"
     product   = "fortinet_fortigate-vm_v5"
   }
-  keyvaultName              = "${azurerm_key_vault.test-keyvault.name}"
-  keyvaultResourceGroupName = "${azurerm_resource_group.test-fortigate-RG.name}"
+  keyvault = {
+    name              = "${azurerm_key_vault.test-keyvault.name}"
+    resource_group_name = "${azurerm_resource_group.test-fortigate-RG.name}"
+  }
+  tags                      = "${var.tags}"
+}
+
+module "test-firewall2" {
+  source = "../."
+
+  name                    = "${var.envprefix}-FW2"
+  vm_size                 = "Standard_F4"
+  admin_username               = "fwadmin"
+  secretPasswordName      = "${azurerm_key_vault_secret.test1.name}"
+  vnet_name                = "${azurerm_virtual_network.test-VNET.name}"
+  resourcegroup_name      = "${azurerm_resource_group.test-fortigate-RG.name}"
+  vnet_resourcegroup_name = "${azurerm_resource_group.test-fortigate-RG.name}"
+  custom_data          = "fwconfig/fwconfig-lic.conf"
+  # Associated to Nic1
+  subnet1_name = "${azurerm_subnet.subnet1.name}"
+  # Associated to Nic2
+  subnet2_name = "${azurerm_subnet.subnet2.name}"
+  # Associated to Nic3
+  subnet3_name = "${azurerm_subnet.subnet3.name}"
+  # Associated to Nic4
+  subnet4_name = "${azurerm_subnet.subnet4.name}"
+  # Firewall A NIC Private IPs
+  nic1_private_ip_address   = ["10.10.10.6", "10.10.10.7"]
+  nic1_public_ip            = false
+  nic2_private_ip_address   = ["10.10.10.69", "10.10.10.70"]
+  nic3_private_ip_address   = ["10.10.10.134", "10.10.10.135"]
+  nic4_private_ip_address   = ["10.10.10.197"]
+  keyvault = {
+    name              = "${azurerm_key_vault.test-keyvault.name}"
+    resource_group_name = "${azurerm_resource_group.test-fortigate-RG.name}"
+  }
   tags                      = "${var.tags}"
 }
