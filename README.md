@@ -71,7 +71,7 @@ module "fortigateap" {
 | storage_image_reference | object | no       | Specify the storage image used to create the VM. Default is 2016-Datacenter. - [storage image](#storage-image-reference-object) |
 | plan                    | object | no       | Specify the plan used to create the VM. - [plan](#plan-object)                                                                  |
 | custom_data             | string | no       | some custom ps1 code to execute. Eg: ${file("serverconfig/jumpbox-init.ps1")}                                                   |
-| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: true                                                           |
+| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: true                                                            |
 | location                | string | no       | Azure location for resources. Default: canadacentral                                                                            |
 | vm_size                 | string | no       | Specifies the desired size of the Virtual Machine. Default: Standard_F4                                                         |
 
@@ -148,6 +148,7 @@ keyvault = {
 
 | Date     | Release    | Change                                                                    |
 | -------- | ---------- | ------------------------------------------------------------------------- |
+| 20190912 | 20190912.1 | Update resource naming to align with proposed GC Cloud naming standard    |
 | 20190829 | 20190829.1 | Add support for multiple NIC                                              |
 |          |            | Renamed some of the variables to align better with basicvm modules syntax |
 |          |            | Update documentation                                                      |

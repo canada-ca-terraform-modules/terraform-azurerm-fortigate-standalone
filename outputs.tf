@@ -3,5 +3,5 @@ output "firewall" {
 }
 
 output "publicIP" {
-  value = "${azurerm_public_ip.FW-EXT-PubIP}"
+  value = "${azurerm_public_ip.FW-pip}"
 }

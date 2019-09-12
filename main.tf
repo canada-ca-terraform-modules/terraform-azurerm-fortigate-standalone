@@ -1,5 +1,5 @@
-resource azurerm_network_security_group NSG {
-  name                = "${var.name}-NSG"
+resource azurerm_network_security_group nsg {
+  name                = "${var.name}-nsg"
   location            = "${var.location}"
   resource_group_name = "${var.resourcegroup_name}"
   security_rule {
@@ -35,7 +35,7 @@ resource azurerm_network_interface FW-Nic1 {
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
-  network_security_group_id     = "${azurerm_network_security_group.NSG.id}"
+  network_security_group_id     = "${azurerm_network_security_group.nsg.id}"
   dynamic "ip_configuration" {
     for_each = var.nic1_private_ip_address
     content {
@@ -43,7 +43,7 @@ resource azurerm_network_interface FW-Nic1 {
       subnet_id                     = "${data.azurerm_subnet.subnet1.id}"
       private_ip_address            = "${var.nic1_private_ip_address[ip_configuration.key]}"
       private_ip_address_allocation = "Static"
-      public_ip_address_id          = var.nic1_public_ip ? azurerm_public_ip.FW-EXT-PubIP[ip_configuration.key].id : null
+      public_ip_address_id          = var.nic1_public_ip ? azurerm_public_ip.FW-pip[ip_configuration.key].id : null
       primary                       = ip_configuration.key == 0 ? true : false
     }
   }
@@ -55,7 +55,7 @@ resource azurerm_network_interface FW-Nic2 {
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
-  network_security_group_id     = "${azurerm_network_security_group.NSG.id}"
+  network_security_group_id     = "${azurerm_network_security_group.nsg.id}"
   dynamic "ip_configuration" {
     for_each = var.nic2_private_ip_address
     content {
@@ -74,7 +74,7 @@ resource azurerm_network_interface FW-Nic3 {
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
-  network_security_group_id     = "${azurerm_network_security_group.NSG.id}"
+  network_security_group_id     = "${azurerm_network_security_group.nsg.id}"
   dynamic "ip_configuration" {
     for_each = var.nic3_private_ip_address
     content {
@@ -93,7 +93,7 @@ resource azurerm_network_interface FW-Nic4 {
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
-  network_security_group_id     = "${azurerm_network_security_group.NSG.id}"
+  network_security_group_id     = "${azurerm_network_security_group.nsg.id}"
   dynamic "ip_configuration" {
     for_each = var.nic4_private_ip_address
     content {
@@ -107,9 +107,9 @@ resource azurerm_network_interface FW-Nic4 {
 }
 
 # If public_ip is true then create resource. If not then do not create any
-resource azurerm_public_ip FW-EXT-PubIP {
+resource azurerm_public_ip FW-pip {
   count               = var.nic1_public_ip ? length(var.nic1_private_ip_address) : 0
-  name                = "${var.name}-EXT-PubIP${count.index + 1}"
+  name                = "${var.name}-pip${count.index + 1}"
   location            = "${var.location}"
   resource_group_name = "${var.resourcegroup_name}"
   sku                 = "Standard"
@@ -118,7 +118,7 @@ resource azurerm_public_ip FW-EXT-PubIP {
 }
 
 resource azurerm_virtual_machine FW {
-  name                = "${var.name}"
+  name                = "${var.name}-vm"
   location            = "${var.location}"
   resource_group_name = "${var.resourcegroup_name}"
   vm_size             = "${var.vm_size}"
@@ -151,14 +151,14 @@ resource azurerm_virtual_machine FW {
     disable_password_authentication = false
   }
   storage_os_disk {
-    name          = "${var.name}-A_OsDisk_1"
+    name          = "${var.name}-osdisk1"
     caching       = "ReadWrite"
     create_option = "FromImage"
     os_type       = "Linux"
     disk_size_gb  = "2"
   }
   storage_data_disk {
-    name          = "${var.name}-A_DataDisk_1"
+    name          = "${var.name}-datadisk1"
     lun           = 0
     caching       = "None"
     create_option = "Empty"
