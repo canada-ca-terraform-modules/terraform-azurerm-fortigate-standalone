@@ -31,7 +31,7 @@ resource azurerm_network_security_group nsg {
 
 resource azurerm_network_interface FW-Nic1 {
   name                          = "${var.name}-Nic1"
-  depends_on                    = ["${var.vm_depends_on}"]
+  depends_on                    = [var.vm_depends_on]
   location                      = "${var.location}"
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
@@ -52,7 +52,7 @@ resource azurerm_network_interface FW-Nic1 {
 
 resource azurerm_network_interface FW-Nic2 {
   name                          = "${var.name}-Nic2"
-  depends_on                    = ["${var.vm_depends_on}"]
+  depends_on                    = [var.vm_depends_on]
   location                      = "${var.location}"
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
@@ -72,7 +72,7 @@ resource azurerm_network_interface FW-Nic2 {
 
 resource azurerm_network_interface FW-Nic3 {
   name                          = "${var.name}-Nic3"
-  depends_on                    = ["${var.vm_depends_on}"]
+  depends_on                    = [var.vm_depends_on]
   location                      = "${var.location}"
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true
@@ -92,7 +92,7 @@ resource azurerm_network_interface FW-Nic3 {
 
 resource azurerm_network_interface FW-Nic4 {
   name                          = "${var.name}-Nic4"
-  depends_on                    = ["${var.vm_depends_on}"]
+  depends_on                    = [var.vm_depends_on]
   location                      = "${var.location}"
   resource_group_name           = "${var.resourcegroup_name}"
   enable_ip_forwarding          = true

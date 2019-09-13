@@ -22,7 +22,7 @@ The following security controls can be met through configuration of this templat
 module "fortigateap" {
   source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigate-standalone-4nic?ref=20190829.1"
 
-  name                         = "Something-FW"
+  name                         = "someName"
   resourcegroup_name           = "someRGName"
   vm_size                      = "Standard_F4"
   admin_username               = "fwadmin"
