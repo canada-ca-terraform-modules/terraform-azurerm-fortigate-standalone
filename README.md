@@ -49,31 +49,32 @@ module "fortigateap" {
 
 ## Variables Values
 
-| Name                    | Type   | Required | Value                                                                                                                           |
-| ----------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| name                    | string | yes      | Name for the firewall resource                                                                                                  |
-| resource_group_name     | string | yes      | Name of the resourcegroup that will contain the Firewall resources                                                              |
-| admin_username          | string | yes      | Name of the VM admin account                                                                                                    |
-| secretPasswordName      | string | yes      | Name of the Keyvault secret containing the VM admin account password                                                            |
-| custom_data             | string | yes      | some base firewall config code to apply. Eg: "fwconfig/fwconfig-lic.conf"                                                       |
-| vnetName                | string | yes      | Name of the VNET the subnet is part of                                                                                          |
-| vnet_resourcegroup_name | string | yes      | Name of the resourcegroup containing the VNET                                                                                   |
-| subnet1Name             | string | yes      | Name of the subnet where NIC1 will connect to                                                                                   |
-| subnet2Name             | string | yes      | Name of the subnet where NIC2 will connect to                                                                                   |
-| subnet3Name             | string | yes      | Name of the subnet where NIC3 will connect to                                                                                   |
-| subnet4Name             | string | yes      | Name of the subnet where NIC4 will connect to                                                                                   |
-| keyvault                | object | yes      | Object containing keyvault resource configuration. - [keyvault](#keyvault-object)                                               |
-| tags                    | object | yes      | Object containing a tag values - [tags pairs](#tag-object)                                                                      |
-| nic1_private_ip_address | list   | yes      | List of private IP for the NIC1 - Eg: for two IP: ["10.10.10.10", "10.10.10.11"]                                                |
-| nic2_private_ip_address | list   | yes      | List of private IP for the NIC2 - Eg: for one IP: ["10.10.20.10"]                                                               |
-| nic3_private_ip_address | list   | yes      | List of private IP for the NIC3 - Eg: for one IP: ["10.10.30.10"]                                                               |
-| nic4_private_ip_address | list   | yes      | List of private IP for the NIC4 - Eg: for one IP: ["10.10.40.10"]                                                               |
-| storage_image_reference | object | no       | Specify the storage image used to create the VM. Default is 2016-Datacenter. - [storage image](#storage-image-reference-object) |
-| plan                    | object | no       | Specify the plan used to create the VM. - [plan](#plan-object)                                                                  |
-| custom_data             | string | no       | some custom ps1 code to execute. Eg: ${file("serverconfig/jumpbox-init.ps1")}                                                   |
-| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: true                                                            |
-| location                | string | no       | Azure location for resources. Default: canadacentral                                                                            |
-| vm_size                 | string | no       | Specifies the desired size of the Virtual Machine. Default: Standard_F4                                                         |
+| Name                    | Type   | Required | Value                                                                                                                                 |
+| ----------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| name                    | string | yes      | Name for the firewall resource                                                                                                        |
+| resource_group_name     | string | yes      | Name of the resourcegroup that will contain the Firewall resources                                                                    |
+| admin_username          | string | yes      | Name of the VM admin account                                                                                                          |
+| secretPasswordName      | string | yes      | Name of the Keyvault secret containing the VM admin account password                                                                  |
+| custom_data             | string | yes      | some base firewall config code to apply. Eg: "fwconfig/fwconfig-lic.conf"                                                             |
+| vnetName                | string | yes      | Name of the VNET the subnet is part of                                                                                                |
+| vnet_resourcegroup_name | string | yes      | Name of the resourcegroup containing the VNET                                                                                         |
+| subnet1Name             | string | yes      | Name of the subnet where NIC1 will connect to                                                                                         |
+| subnet2Name             | string | yes      | Name of the subnet where NIC2 will connect to                                                                                         |
+| subnet3Name             | string | yes      | Name of the subnet where NIC3 will connect to                                                                                         |
+| subnet4Name             | string | yes      | Name of the subnet where NIC4 will connect to                                                                                         |
+| keyvault                | object | yes      | Object containing keyvault resource configuration. - [keyvault](#keyvault-object)                                                     |
+| tags                    | object | yes      | Object containing a tag values - [tags pairs](#tag-object)                                                                            |
+| nic1_private_ip_address | list   | yes      | List of private IP for the NIC1 - Eg: for two IP: ["10.10.10.10", "10.10.10.11"]                                                      |
+| nic2_private_ip_address | list   | yes      | List of private IP for the NIC2 - Eg: for one IP: ["10.10.20.10"]                                                                     |
+| nic3_private_ip_address | list   | yes      | List of private IP for the NIC3 - Eg: for one IP: ["10.10.30.10"]                                                                     |
+| nic4_private_ip_address | list   | yes      | List of private IP for the NIC4 - Eg: for one IP: ["10.10.40.10"]                                                                     |
+| storage_image_reference | object | no       | Specify the storage image used to create the VM. Default is 2016-Datacenter. - [storage image](#storage-image-reference-object)       |
+| plan                    | object | no       | Specify the plan used to create the VM. - [plan](#plan-object)                                                                        |
+| custom_data             | string | no       | some custom ps1 code to execute. Eg: ${file("serverconfig/jumpbox-init.ps1")}                                                         |
+| nic1_public_ip          | bool   | no       | Does the Firewall require public IP(s). true or false. Default: true                                                                  |
+| location                | string | no       | Azure location for resources. Default: canadacentral                                                                                  |
+| vm_size                 | string | no       | Specifies the desired size of the Virtual Machine. Default: Standard_F4                                                               |
+| vm_depends_on           | list   | no       | List of [terraform dependancies](#dependancies-list) that need to be deployed before the firewall deployment can start. Default: null |
 
 ### tag object
 
@@ -144,12 +145,27 @@ keyvault = {
 }
 ```
 
+### dependancies list
+
+| Name     | Type   | Required | Value                                    |
+| -------- | ------ | -------- | ---------------------------------------- |
+| resource | string | yes      | A resource that has to have been created |
+| ...      | ...    | ...      | ...d                                     |
+| resource | string | yes      | A resource that has to have been created |
+
+Example variable:
+
+```hcl
+vm_depends_on = ["${module.FWCore01.firewall}", "${module.FWMGMT01.firewall}", "${azurerm_public_ip.pip}"]
+```
+
 ## History
 
 | Date     | Release    | Change                                                                    |
 | -------- | ---------- | ------------------------------------------------------------------------- |
+| 20190913 | 20190913.1 | Add support for optional vm_depends_on                                    |
 | 20190912 | 20190912.1 | Update resource naming to align with proposed GC Cloud naming standard    |
-| 20190829 | 20190829.1 | Add support for multiple NIC                                              |
+| 20190829 | 20190829.1 | Add support for multiple IP per NIC                                       |
 |          |            | Renamed some of the variables to align better with basicvm modules syntax |
 |          |            | Update documentation                                                      |
 | 20190806 | 20190806.1 | Adding support for optional public IP on NIC 1                            |
